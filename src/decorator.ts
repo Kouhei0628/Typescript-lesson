@@ -41,6 +41,17 @@ function MethodLogging(
   console.log(propertyKey);
   console.log(descriptor);
 }
+function enumerable(isEnumerable: boolean) {
+  return function (
+    _target: any,
+    _propertyKey: string,
+    _descriptor: PropertyDescriptor
+  ) {
+    return {
+      enumerable: isEnumerable,
+    };
+  };
+}
 function AccessorLogging(
   target: any,
   propertyKey: string,
@@ -50,6 +61,16 @@ function AccessorLogging(
   console.log(target);
   console.log(propertyKey);
   console.log(descriptor);
+}
+function ParameterLogging(
+  target: any,
+  propertyKey: string,
+  parameterIndex: number
+) {
+  console.log("ParameterLogging");
+  console.log(target);
+  console.log(propertyKey);
+  console.log(parameterIndex);
 }
 
 // デコレータは下から上に順番に実行される
@@ -68,10 +89,11 @@ class User {
   set age(value) {
     this._age = value;
   }
+  @enumerable(false)
   @MethodLogging
-  greeting() {
+  greeting(@ParameterLogging message: string) {
     // メソッドはprototype chainingに格納される
-    console.log("Hello");
+    console.log(message);
   }
 }
 const user1 = new User(48);
